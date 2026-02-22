@@ -61,7 +61,9 @@ struct ApplicationData: Codable, Identifiable {
     // MARK: - Universal Link Generation
     
     /// Generate Universal Link with encoded data
-    func generateUniversalLink() -> String? {
+    /// For production: https://quickrent.app/application?data=...
+    /// For testing: quickrent://application?data=... (custom URL scheme)
+    func generateUniversalLink(useCustomScheme: Bool = true) -> String? {
         guard let base64Data = toBase64() else { return nil }
         
         // URL encode the Base64 string to handle special characters
@@ -69,16 +71,27 @@ struct ApplicationData: Codable, Identifiable {
             return nil
         }
         
-        return "https://quickrent.app/application?data=\(encodedData)"
+        // Use custom URL scheme for testing (works without domain setup)
+        // Switch to https:// for production after configuring Associated Domains
+        let baseURL = useCustomScheme ? "quickrent://application" : "https://quickrent.app/application"
+        return "\(baseURL)?data=\(encodedData)"
     }
     
     /// Parse Universal Link to extract ApplicationData
+    /// Supports both https:// (production) and quickrent:// (testing)
     static func parseUniversalLink(_ url: URL) -> ApplicationData? {
-        // Validate URL structure
-        guard url.scheme == "https",
-              url.host == "quickrent.app",
-              url.path == "/application" else {
-            print("❌ Invalid Universal Link format")
+        // Validate URL structure - accept both custom scheme and https
+        let isCustomScheme = url.scheme == "quickrent"
+        let isUniversalLink = url.scheme == "https" && url.host == "quickrent.app"
+        
+        guard isCustomScheme || isUniversalLink else {
+            print("❌ Invalid URL scheme: \(url.scheme ?? "nil")")
+            print("   Expected: quickrent:// or https://quickrent.app")
+            return nil
+        }
+        
+        guard url.path == "/application" || url.path == "application" else {
+            print("❌ Invalid URL path: \(url.path)")
             return nil
         }
         

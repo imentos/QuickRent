@@ -50,12 +50,14 @@
 		B3E76A1D2F49427A000B4D34 /* Exceptions for "QuickRent" folder in "QuickRentClip" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Models/ApplicationData.swift,
 				Models/Question.swift,
 				ViewModels/QuestionnaireViewModel.swift,
 				Views/ConfirmationView.swift,
 				Views/EmailComposerView.swift,
 				Views/QuestionnaireView.swift,
 				Views/QuestionRowView.swift,
+				Views/SMSComposerView.swift,
 			);
 			target = B3E76A092F494134000B4D34 /* QuickRentClip */;
 		};
