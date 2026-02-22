@@ -90,9 +90,20 @@ struct ApplicationData: Codable, Identifiable {
             return nil
         }
         
-        guard url.path == "/application" || url.path == "application" else {
-            print("❌ Invalid URL path: \(url.path)")
-            return nil
+        // Validate path/host based on URL type
+        // Custom scheme: quickrent://application?data=... → host is "application", path is ""
+        // Universal Link: https://quickrent.app/application?data=... → host is "quickrent.app", path is "/application"
+        if isCustomScheme {
+            guard url.host == "application" else {
+                print("❌ Invalid custom scheme host: \(url.host ?? "nil")")
+                print("   Expected: quickrent://application")
+                return nil
+            }
+        } else {
+            guard url.path == "/application" || url.path == "application" else {
+                print("❌ Invalid URL path: \(url.path)")
+                return nil
+            }
         }
         
         // Extract query parameters
