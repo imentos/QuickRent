@@ -19,11 +19,20 @@ class QuestionnaireViewModel: ObservableObject {
     @Published var validationErrors: Set<String> = []
     @Published var generatedUniversalLink: String?
     
-    let landlordEmail = "landlord@email.com" // Configure with actual email
-    let landlordPhone = "+1234567890" // Configure with actual phone
+    let landlordEmail: String
+    let landlordPhone: String
     
-    init(questionnaire: Questionnaire = .sample) {
-        self.questionnaire = questionnaire
+    init(questionnaire: Questionnaire = .sample, landlordPhone: String = "+1234567890", propertyId: String? = nil) {
+        // Update questionnaire with property ID if provided
+        var updatedQuestionnaire = questionnaire
+        if let propertyId = propertyId {
+            updatedQuestionnaire.propertyId = propertyId
+        }
+        self.questionnaire = updatedQuestionnaire
+        
+        // Configure contact info
+        self.landlordPhone = landlordPhone
+        self.landlordEmail = "landlord@email.com" // Can be extended to accept as parameter
         
         // Initialize responses for all questions
         for question in questionnaire.questions {

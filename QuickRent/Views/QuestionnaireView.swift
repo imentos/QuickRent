@@ -9,7 +9,21 @@ import SwiftUI
 import MessageUI
 
 struct QuestionnaireView: View {
-    @StateObject private var viewModel = QuestionnaireViewModel()
+    let landlordPhone: String?
+    let propertyId: String?
+    
+    @StateObject private var viewModel: QuestionnaireViewModel
+    
+    init(landlordPhone: String? = nil, propertyId: String? = nil) {
+        self.landlordPhone = landlordPhone
+        self.propertyId = propertyId
+        
+        // Initialize view model with parameters
+        _viewModel = StateObject(wrappedValue: QuestionnaireViewModel(
+            landlordPhone: landlordPhone ?? "+1234567890",
+            propertyId: propertyId
+        ))
+    }
     
     var body: some View {
         NavigationStack {
