@@ -65,10 +65,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
-				Views/ConfirmationView.swift,
-				Views/EmailComposerView.swift,
-				Views/QuestionnaireView.swift,
-				Views/QuestionRowView.swift,
 			);
 			target = B3E7699C2F493C71000B4D34 /* QuickRent */;
 		};

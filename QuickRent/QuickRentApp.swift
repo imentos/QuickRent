@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 @main
 struct QuickRentApp: App {
@@ -27,18 +28,20 @@ struct QuickRentApp: App {
     
     private func handleUniversalLink(_ url: URL) {
         print("📱 Received URL: \(url.absoluteString)")
+        print("   Scheme: \(url.scheme ?? "nil"), Host: \(url.host ?? "nil"), Path: \(url.path)")
         
-        // Determine URL type based on path
-        let path = url.path
+        // For custom schemes (quickrent://), the identifier is in the host
+        // For Universal Links (https://), the identifier is in the path
+        let identifier = url.scheme == "quickrent" ? (url.host ?? "") : url.path
         
-        if path == "/application" || path == "application" {
+        if identifier == "/application" || identifier == "application" {
             // Handle application data import (from tenant SMS)
             handleApplicationImport(url)
-        } else if path == "/property" || path == "property" {
+        } else if identifier == "/property" || identifier == "property" {
             // Handle property questionnaire (from QR code scan with full app installed)
             handlePropertyQuestionnaire(url)
         } else {
-            print("⚠️ Unknown URL path: \(path)")
+            print("⚠️ Unknown URL identifier: \(identifier)")
         }
     }
     
