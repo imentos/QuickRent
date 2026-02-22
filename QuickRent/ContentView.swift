@@ -9,9 +9,26 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var dashboardViewModel: LandlordDashboardViewModel
+    @EnvironmentObject var appState: AppState
     
     var body: some View {
         LandlordDashboardView()
+            .sheet(isPresented: $appState.showingQuestionnaire) {
+                NavigationStack {
+                    QuestionnaireView(
+                        landlordPhone: appState.questionnaireLandlordPhone,
+                        propertyId: appState.questionnairePropertyId
+                    )
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("Close") {
+                                appState.closeQuestionnaire()
+                            }
+                        }
+                    }
+                }
+            }
     }
 }
 
