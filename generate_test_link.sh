@@ -24,36 +24,21 @@ contact=${contact:-test@example.com}
 echo ""
 echo "Generating link..."
 
-# Create JSON (properly escaped for shell)
-JSON=$(cat <<EOF
-{
-  "id": "$(uuidgen)",
-  "propertyId": "$property_id",
-  "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
-  "applicantName": null,
-  "responses": {
-    "movein": "March 1, 2026",
-    "income": "$income",
-    "occupants": "$occupants",
-    "pets": "No",
-    "smoking": "No",
-    "contact": "$contact"
-  }
-}
-EOF
-)
+# Generate UUID and timestamp
+UUID=$(uuidgen)
+TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
-# Base64 encode (compatible with both macOS and Linux)
+# Create compact JSON (no whitespace - critical for proper encoding)
+JSON="{\"id\":\"$UUID\",\"propertyId\":\"$property_id\",\"timestamp\":\"$TIMESTAMP\",\"applicantName\":null,\"responses\":{\"movein\":\"March 1, 2026\",\"income\":\"$income\",\"occupants\":\"$occupants\",\"pets\":\"No\",\"smoking\":\"No\",\"contact\":\"$contact\"}}"
+
+# Base64 encode - use -w 0 flag if available (Linux), otherwise pipe through tr (macOS)
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    # macOS
-    BASE64=$(echo -n "$JSON" | base64)
+    # macOS - base64 adds line breaks by default, remove them
+    BASE64=$(echo -n "$JSON" | base64 | tr -d '\n')
 else
     # Linux
     BASE64=$(echo -n "$JSON" | base64 -w 0)
 fi
-
-# Remove newlines from base64
-BASE64=$(echo "$BASE64" | tr -d '\n')
 
 # Create link
 LINK="quickrent://application?data=$BASE64"
