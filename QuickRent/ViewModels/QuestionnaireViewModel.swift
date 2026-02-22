@@ -24,18 +24,23 @@ class QuestionnaireViewModel: ObservableObject {
     
     init(questionnaire: Questionnaire = .sample, landlordPhone: String = "+1234567890", propertyId: String? = nil) {
         // Update questionnaire with property ID if provided
-        var updatedQuestionnaire = questionnaire
         if let propertyId = propertyId {
-            updatedQuestionnaire.propertyId = propertyId
+            // Create new questionnaire with updated property ID
+            self.questionnaire = Questionnaire(
+                propertyId: propertyId,
+                title: questionnaire.title,
+                questions: questionnaire.questions
+            )
+        } else {
+            self.questionnaire = questionnaire
         }
-        self.questionnaire = updatedQuestionnaire
         
         // Configure contact info
         self.landlordPhone = landlordPhone
         self.landlordEmail = "landlord@email.com" // Can be extended to accept as parameter
         
         // Initialize responses for all questions
-        for question in questionnaire.questions {
+        for question in self.questionnaire.questions {
             responses[question.id] = Response(id: question.id)
         }
     }
