@@ -22,6 +22,21 @@ struct SMSComposerView: UIViewControllerRepresentable {
         
         func messageComposeViewController(_ controller: MFMessageComposeViewController, 
                                         didFinishWith result: MessageComposeResult) {
+            // Log SMS result
+            print("📱 SMS Composer Dismissed")
+            print("   Recipients: \(parent.recipients.joined(separator: ", "))")
+            
+            switch result {
+            case .sent:
+                print("   ✅ Status: Message sent successfully")
+            case .cancelled:
+                print("   ⚠️ Status: User cancelled")
+            case .failed:
+                print("   ❌ Status: Message failed to send")
+            @unknown default:
+                print("   ⚠️ Status: Unknown result")
+            }
+            
             controller.dismiss(animated: true)
             parent.onDismiss()
         }
@@ -32,6 +47,10 @@ struct SMSComposerView: UIViewControllerRepresentable {
     }
     
     func makeUIViewController(context: Context) -> MFMessageComposeViewController {
+        print("📱 Opening SMS Composer")
+        print("   Recipients: \(recipients.joined(separator: ", "))")
+        print("   Body preview: \(body.prefix(50))...")
+        
         let composer = MFMessageComposeViewController()
         composer.messageComposeDelegate = context.coordinator
         composer.recipients = recipients

@@ -159,31 +159,41 @@ class QuestionnaireViewModel: ObservableObject {
     func submitViaSMS() {
         guard validateResponses() else { return }
         
+        print("📤 Preparing SMS submission")
+        print("   Landlord Phone: \(landlordPhone)")
+        print("   Property ID: \(questionnaire.propertyId ?? "unknown")")
+        
         // Check if SMS is available
         guard MFMessageComposeViewController.canSendText() else {
-            print("SMS not available on this device")
+            print("❌ SMS not available on this device")
             return
         }
         
         // Generate the Universal Link
         guard generateUniversalLink() != nil else {
-            print("Failed to generate Universal Link")
+            print("❌ Failed to generate Universal Link")
             return
         }
         
+        print("✅ SMS ready to send to: \(landlordPhone)")
         showingSMSSubmission = true
     }
     
     func submitViaEmail() {
         guard validateResponses() else { return }
         
+        print("📧 Preparing email submission")
+        print("   Landlord Email: \(landlordEmail)")
+        print("   Property ID: \(questionnaire.propertyId ?? "unknown")")
+        
         // Check if email is available
         guard MFMailComposeViewController.canSendMail() else {
             // Show error - email not configured
-            print("Email not available on this device")
+            print("❌ Email not available on this device")
             return
         }
         
+        print("✅ Email ready to send to: \(landlordEmail)")
         showingSubmission = true
     }
     

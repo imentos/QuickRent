@@ -24,6 +24,26 @@ struct EmailComposerView: UIViewControllerRepresentable {
         func mailComposeController(_ controller: MFMailComposeViewController, 
                                   didFinishWith result: MFMailComposeResult, 
                                   error: Error?) {
+            // Log email result
+            print("📧 Email Composer Dismissed")
+            print("   Recipients: \(parent.recipients.joined(separator: ", "))")
+            
+            switch result {
+            case .sent:
+                print("   ✅ Status: Email sent successfully")
+            case .saved:
+                print("   💾 Status: Email saved as draft")
+            case .cancelled:
+                print("   ⚠️ Status: User cancelled")
+            case .failed:
+                print("   ❌ Status: Email failed to send")
+                if let error = error {
+                    print("   Error: \(error.localizedDescription)")
+                }
+            @unknown default:
+                print("   ⚠️ Status: Unknown result")
+            }
+            
             controller.dismiss(animated: true)
             parent.onDismiss()
         }
@@ -34,6 +54,11 @@ struct EmailComposerView: UIViewControllerRepresentable {
     }
     
     func makeUIViewController(context: Context) -> MFMailComposeViewController {
+        print("📧 Opening Email Composer")
+        print("   Recipients: \(recipients.joined(separator: ", "))")
+        print("   Subject: \(subject)")
+        print("   Body preview: \(body.prefix(50))...")
+        
         let composer = MFMailComposeViewController()
         composer.mailComposeDelegate = context.coordinator
         composer.setToRecipients(recipients)
